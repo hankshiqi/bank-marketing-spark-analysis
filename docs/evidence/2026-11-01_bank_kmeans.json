@@ -1,0 +1,13 @@
+{
+  "dataset": "UCI Bank Marketing",
+  "k": 3,
+  "training_rows": 45211,
+  "features": [
+    "age",
+    "balance",
+    "campaign",
+    "previous"
+  ],
+  "target_used_as_feature": false,
+  "training_cost": 123476.03271917769
+}

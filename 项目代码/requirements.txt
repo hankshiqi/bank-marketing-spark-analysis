@@ -1,0 +1,14 @@
+# 课程设计运行依赖（建议装在 /opt/miniconda3 环境里）
+# 安装：/opt/miniconda3/bin/pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
+
+pyspark==3.5.1
+pandas>=2.0
+numpy>=1.24
+pyarrow>=14.0
+flask>=3.0
+
+# 可选：爬虫 / 数据库（如果要做 MongoDB、Redis 加分项）
+# pymongo>=4.6
+# redis>=5.0
+# requests>=2.31
+# beautifulsoup4>=4.12

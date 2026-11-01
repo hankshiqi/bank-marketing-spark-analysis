@@ -1,0 +1,49 @@
+{
+  "dataset": "UCI Bank Marketing",
+  "source": "https://archive.ics.uci.edu/dataset/222/bank+marketing",
+  "raw_path": "hdfs://master:9000/bigdata/raw/bank_marketing/bank-full.csv",
+  "rows": 45211,
+  "columns": [
+    "age",
+    "job",
+    "marital",
+    "education",
+    "default",
+    "balance",
+    "housing",
+    "loan",
+    "contact",
+    "day",
+    "month",
+    "duration",
+    "campaign",
+    "pdays",
+    "previous",
+    "poutcome",
+    "y"
+  ],
+  "duplicate_rows": 0,
+  "nulls": {
+    "age": 0,
+    "job": 0,
+    "marital": 0,
+    "education": 0,
+    "default": 0,
+    "balance": 0,
+    "housing": 0,
+    "loan": 0,
+    "contact": 0,
+    "day": 0,
+    "month": 0,
+    "duration": 0,
+    "campaign": 0,
+    "pdays": 0,
+    "previous": 0,
+    "poutcome": 0,
+    "y": 0
+  },
+  "subscription_distribution": {
+    "no": 39922,
+    "yes": 5289
+  }
+}

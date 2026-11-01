@@ -1,0 +1,9 @@
+{
+  "dataset": "UCI Bank Marketing",
+  "source_rows": 45211,
+  "clean_rows": 45211,
+  "removed_rows": 0,
+  "parquet_path": "hdfs://master:9000/bigdata/ods/bank_marketing",
+  "month_partitions": 12,
+  "readback_matches": true
+}

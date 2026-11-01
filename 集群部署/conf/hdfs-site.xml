@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+  文件名：hdfs-site.xml
+  路径：$HADOOP_HOME/etc/hadoop/hdfs-site.xml
+  说明：2 节点部署 => 副本数必须为 2（写 3 会一直卡在 under-replicated）
+-->
+<configuration>
+
+  <!-- NameNode 元数据目录 -->
+  <property>
+    <name>dfs.namenode.name.dir</name>
+    <value>file:///opt/hadoop/data/name</value>
+  </property>
+
+  <!-- DataNode 数据块目录，多块盘可用逗号分隔 -->
+  <property>
+    <name>dfs.datanode.data.dir</name>
+    <value>file:///opt/hadoop/data/data</value>
+  </property>
+
+  <!-- 只有 2 台机器，副本数=2；单机测试时可临时改成 1 加快速度 -->
+  <property>
+    <name>dfs.replication</name>
+    <value>2</value>
+  </property>
+
+  <property>
+    <name>dfs.blocksize</name>
+    <value>134217728</value>
+  </property>
+
+  <!-- NameNode Web UI：http://master:9870 （Hadoop 2.x 为 50070，别照抄老教程） -->
+  <property>
+    <name>dfs.namenode.http-address</name>
+    <value>master:9870</value>
+  </property>
+
+  <!-- SecondaryNameNode（Hadoop 3 实际为 CheckpointNode） -->
+  <property>
+    <name>dfs.namenode.secondary.http-address</name>
+    <value>master:9868</value>
+  </property>
+
+  <!-- 小集群把 RPC 线程数压小，省内存 -->
+  <property>
+    <name>dfs.namenode.handler.count</name>
+    <value>20</value>
+  </property>
+
+  <property>
+    <name>dfs.datanode.max.transfer.threads</name>
+    <value>1024</value>
+  </property>
+
+  <!-- 每个 DataNode 盘上预留 1 GB，防止写满系统盘导致机器失联 -->
+  <property>
+    <name>dfs.datanode.du.reserved</name>
+    <value>1073741824</value>
+  </property>
+
+  <!-- 关闭 HDFS 权限检查（课程环境简化；生产不要关） -->
+  <property>
+    <name>dfs.permissions.enabled</name>
+    <value>false</value>
+  </property>
+
+</configuration>

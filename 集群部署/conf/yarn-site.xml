@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  文件名：yarn-site.xml
+  路径：$HADOOP_HOME/etc/hadoop/yarn-site.xml
+  说明：4 GiB 节点的关键调优点都在这里。
+        - 容器池 2048 MB（留 ~1.5 GB 给 OS + DataNode + NodeManager + Spark Driver）
+        - 关闭 vmem/pmem 检查，否则 Spark/PySpark 很容易被 YARN 误杀
+-->
+<configuration>
+
+  <property>
+    <name>yarn.resourcemanager.hostname</name>
+    <value>master</value>
+  </property>
+  <property>
+    <name>yarn.resourcemanager.webapp.address</name>
+    <value>master:8088</value>
+  </property>
+
+  <!-- Shuffle 服务，MapReduce on YARN 必须 -->
+  <property>
+    <name>yarn.nodemanager.aux-services</name>
+    <value>mapreduce_shuffle</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.aux-services.mapreduce_shuffle.class</name>
+    <value>org.apache.hadoop.mapred.ShuffleHandler</value>
+  </property>
+
+  <!-- ===== 内存 ===== -->
+  <!-- 单节点可分配给容器的总内存；4096 物理内存下 2048 是稳妥值 -->
+  <property>
+    <name>yarn.nodemanager.resource.memory-mb</name>
+    <value>2048</value>
+  </property>
+  <!-- 单个容器上限，必须 <= 上面的值 -->
+  <property>
+    <name>yarn.scheduler.maximum-allocation-mb</name>
+    <value>1536</value>
+  </property>
+  <property>
+    <name>yarn.scheduler.minimum-allocation-mb</name>
+    <value>256</value>
+  </property>
+
+  <!-- ===== CPU ===== -->
+  <property>
+    <name>yarn.nodemanager.resource.cpu-vcores</name>
+    <value>2</value>
+  </property>
+  <property>
+    <name>yarn.scheduler.maximum-allocation-vcores</name>
+    <value>2</value>
+  </property>
+  <property>
+    <name>yarn.scheduler.minimum-allocation-vcores</name>
+    <value>1</value>
+  </property>
+
+  <!-- ===== 关键：关闭虚拟内存/物理内存越界检查 =====
+       CentOS 默认 overcommit 策略下，JVM 预留的虚拟内存远大于实际使用，
+       开启检查会导致 "Container killed ... beyond virtual memory limits" -->
+  <property>
+    <name>yarn.nodemanager.vmem-check-enabled</name>
+    <value>false</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.pmem-check-enabled</name>
+    <value>false</value>
+  </property>
+
+  <!-- ===== 日志聚合，答辩截图时便于展示 ===== -->
+  <property>
+    <name>yarn.log-aggregation-enable</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.log.retain-seconds</name>
+    <value>86400</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.remote-app-log-dir</name>
+    <value>/logs</value>
+  </property>
+
+  <!-- 单节点上并发容器数量限制，避免 2 vCPU 被抢爆 -->
+  <property>
+    <name>yarn.nodemanager.localizer.fetch.thread-count</name>
+    <value>2</value>
+  </property>
+
+</configuration>

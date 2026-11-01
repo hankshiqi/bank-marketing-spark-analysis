@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+  文件名：core-site.xml
+  路径：$HADOOP_HOME/etc/hadoop/core-site.xml
+  适用：2 节点（master + worker1）、4 GiB 内存、CentOS 7.9
+  注意：master 必须已在 /etc/hosts 中解析到私网 IP
+-->
+<configuration>
+
+  <!-- HDFS 默认访问入口，端口 9000 与 core/hdfs 保持一致 -->
+  <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://master:9000</value>
+  </property>
+
+  <!-- 全局临时目录。务必放在数据盘/系统盘富余位置，不要用 /tmp（重启会被清理） -->
+  <property>
+    <name>hadoop.tmp.dir</name>
+    <value>/opt/hadoop/data/tmp</value>
+  </property>
+
+  <!-- 缓冲区 128 KB，小文件多时可提升吞吐 -->
+  <property>
+    <name>io.file.buffer.size</name>
+    <value>131072</value>
+  </property>
+
+  <!-- Web UI 以 root 身份浏览文件时不报权限错误（课程演示用，生产勿开） -->
+  <property>
+    <name>hadoop.http.staticuser.user</name>
+    <value>root</value>
+  </property>
+
+  <!-- 回收站保留 1 天，误删可恢复：hdfs dfs -mv /user/root/.Trash/... -->
+  <property>
+    <name>fs.trash.interval</name>
+    <value>1440</value>
+  </property>
+
+</configuration>

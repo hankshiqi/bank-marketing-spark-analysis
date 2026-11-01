@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+  文件名：mapred-site.xml
+  路径：$HADOOP_HOME/etc/hadoop/mapred-site.xml
+  说明：Hadoop 3 已自带该文件（不再需要从 template 复制）。
+        4 GiB 内存 => 容器内存一律压到 1024 MB，堆 -Xmx820m。
+-->
+<configuration>
+
+  <property>
+    <name>mapreduce.framework.name</name>
+    <value>yarn</value>
+  </property>
+
+  <!-- Hadoop 3 必须显式声明 classpath，否则容器里找不到 mapreduce 的 jar -->
+  <property>
+    <name>mapreduce.application.classpath</name>
+    <value>/opt/hadoop/share/hadoop/mapreduce/*:/opt/hadoop/share/hadoop/mapreduce/lib/*</value>
+  </property>
+
+  <!-- YARN 容器启动时不会自动继承交互式 shell 的 HADOOP_MAPRED_HOME。 -->
+  <property>
+    <name>yarn.app.mapreduce.am.env</name>
+    <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+  </property>
+  <property>
+    <name>mapreduce.map.env</name>
+    <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+  </property>
+  <property>
+    <name>mapreduce.reduce.env</name>
+    <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+  </property>
+
+  <!-- 历史服务器：http://master:19888 -->
+  <property>
+    <name>mapreduce.jobhistory.address</name>
+    <value>master:10020</value>
+  </property>
+  <property>
+    <name>mapreduce.jobhistory.webapp.address</name>
+    <value>master:19888</value>
+  </property>
+
+  <property>
+    <name>mapreduce.map.memory.mb</name>
+    <value>1024</value>
+  </property>
+  <property>
+    <name>mapreduce.reduce.memory.mb</name>
+    <value>1024</value>
+  </property>
+
+  <!-- 堆 = 容器内存 * 0.8，超过会被 YARN 杀容器 -->
+  <property>
+    <name>mapreduce.map.java.opts</name>
+    <value>-Xmx820m</value>
+  </property>
+  <property>
+    <name>mapreduce.reduce.java.opts</name>
+    <value>-Xmx820m</value>
+  </property>
+
+  <!-- ApplicationMaster 也要占一个容器，内存同样压小 -->
+  <property>
+    <name>yarn.app.mapreduce.am.resource.mb</name>
+    <value>512</value>
+  </property>
+  <property>
+    <name>yarn.app.mapreduce.am.command-opts</name>
+    <value>-Xmx410m</value>
+  </property>
+
+  <!-- 排序缓冲 128 MB，4 GB 机器不要调大 -->
+  <property>
+    <name>mapreduce.task.io.sort.mb</name>
+    <value>128</value>
+  </property>
+  <property>
+    <name>mapreduce.map.sort.spill.percent</name>
+    <value>0.80</value>
+  </property>
+
+  <!-- 允许 JVM 复用，减少小任务启动开销（加速比实验时能明显看到差别） -->
+  <property>
+    <name>mapreduce.job.jvm.numtasks</name>
+    <value>10</value>
+  </property>
+
+</configuration>

@@ -1,0 +1,73 @@
+# Python cache and generated files
+__pycache__/
+*.py[cod]
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+
+# Private cluster configuration and local evidence
+/集群部署/scripts/02_主机名与免密.sh
+/docs/screenshots/
+/docs/source_requirements/
+/docs/evidence/*
+!/docs/evidence/2026-11-01_bank_profile.json
+!/docs/evidence/2026-11-01_bank_etl_summary.json
+!/docs/evidence/2026-11-01_bank_kmeans.json
+!/docs/evidence/2026-11-01_bank_campaign_kpi.csv
+!/docs/evidence/2026-11-01_bank_cluster_summary.csv
+!/docs/evidence/2026-11-01_bank_contact_kpi.csv
+!/docs/evidence/2026-11-01_bank_job_kpi.csv
+!/docs/evidence/2026-11-01_bank_month_kpi.csv
+
+# Course submissions and working material with personal or internal information
+/*.pptx
+/*.pdf
+/*.docx
+/*.zip
+/项目交接说明.md
+/00_先读我.md
+/提交与答辩检查清单.md
+/期末成绩及说明.docx
+/项目交接说明.docx
+/docs/数据集切换说明.md
+/docs/期末要求对照与第一次答辩任务清单.md
+/docs/证据留档清单.md
+/第一次研讨课_前置工作与项目设计_*
+/研讨PPT_第一次.pptx
+/答辩PPT_骨架.pptx
+/课程报告_骨架.docx
+/项目移交包.zip
+
+# Keep only the selected public dataset and diagrams
+/data/*
+!/data/bank_marketing_20261101/
+/data/bank_marketing_20261101/*
+!/data/bank_marketing_20261101/bank/
+/data/bank_marketing_20261101/bank/*
+!/data/bank_marketing_20261101/bank/bank-full.csv
+/docs/illustrations/*
+!/docs/illustrations/first_seminar_flow_refined.png
+!/docs/illustrations/kmeans_concept.png
+
+# Retired UserBehavior and alternate dataset implementation
+/项目代码/algo/
+/项目代码/analysis/
+/项目代码/common.py
+/项目代码/README_运行指南.md
+/项目代码/data/
+/项目代码/etl/
+/项目代码/mr/
+/项目代码/scripts/
+/项目代码/sql/
+/项目代码/stream/
+/项目代码/uci/
+
+# Historical experiments and local tooling
+/_lint/
+/_local_test/
+/_tools/
+/案例5_英雄联盟大数据分析/
+/录屏/

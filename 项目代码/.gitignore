@@ -1,0 +1,18 @@
+# 数据与结果不进版本库（体积大、可重跑）
+data/*.csv
+output/
+logs/
+__pycache__/
+*.pyc
+
+# 编译产物
+mr/classes/
+mr/*.jar
+
+# 编辑器
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# 注意：web/static/echarts.min.js 要提交，教室断网时靠它
