@@ -146,7 +146,8 @@ function renderClusterDetail(r){
   const target=document.getElementById('cluster-detail');
   if(!r){target.innerHTML='<h3>群体画像</h3><p>点击左侧任意群体，查看该群体的规模、年龄、余额、联系次数和订购率。</p>';return;}
   const label=`群 ${r.cluster}`;
-  target.innerHTML=`<h3>${label}：客户画像</h3><p>该群体包含 ${fmt(r.records)} 条记录，聚类特征显示它与其他群体在年龄、余额和联系次数上存在明显差异。</p><div class="detail-grid"><div class="detail-item"><b>${fmt(r.records)}</b><small>群体记录数</small></div><div class="detail-item"><b>${pct(r.conversion_rate)}</b><small>群体订购率</small></div><div class="detail-item"><b>${Number(r.avg_age).toFixed(1)}</b><small>平均年龄</small></div><div class="detail-item"><b>${fmt(Math.round(Number(r.avg_balance)))}</b><small>平均账户余额</small></div><div class="detail-item"><b>${Number(r.avg_campaign_contacts).toFixed(2)}</b><small>平均本轮联系</small></div><div class="detail-item"><b>${Number(r.cluster)===2?'高频联系群':'常规联系群'}</b><small>演示标签</small></div></div>`;
+  const contactLabel=Number(r.avg_campaign_contacts)>=6?'平均联系偏高':'平均联系较少';
+  target.innerHTML=`<h3>${label}：客户画像</h3><p>该群体包含 ${fmt(r.records)} 条记录，聚类特征显示它与其他群体在年龄、余额和联系次数上存在明显差异。</p><div class="detail-grid"><div class="detail-item"><b>${fmt(r.records)}</b><small>群体记录数</small></div><div class="detail-item"><b>${pct(r.conversion_rate)}</b><small>群体订购率</small></div><div class="detail-item"><b>${Number(r.avg_age).toFixed(1)}</b><small>平均年龄</small></div><div class="detail-item"><b>${fmt(Math.round(Number(r.avg_balance)))}</b><small>平均账户余额</small></div><div class="detail-item"><b>${Number(r.avg_campaign_contacts).toFixed(2)}</b><small>平均本轮联系</small></div><div class="detail-item"><b>${contactLabel}</b><small>按平均联系次数描述</small></div></div>`;
 }
 function renderFunnel(d){
   const rows=d.contact||[];
