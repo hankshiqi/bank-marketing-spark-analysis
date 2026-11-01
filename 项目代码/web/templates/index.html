@@ -20,6 +20,11 @@
   .status{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px;white-space:nowrap;color:#e1eceb}
   .dot{width:8px;height:8px;border-radius:50%;background:#dfa34e;flex:none}
   main{max-width:1500px;margin:0 auto;padding:18px 22px 28px}
+  .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);padding:10px 12px;margin-bottom:14px}
+  .toolbar-label{font-size:12px;color:var(--muted);font-weight:600;margin-right:2px}
+  .view-btn{border:1px solid #c8d8d6;background:#f7faf9;color:var(--ink);padding:7px 11px;font-size:12px;cursor:pointer;border-radius:3px}
+  .view-btn:hover,.view-btn.active{background:#087f78;color:#fff;border-color:#087f78}
+  .toolbar-note{margin-left:auto;font-size:11px;color:var(--muted)}
   .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
   .kpi{background:var(--white);border:1px solid var(--line);border-top:3px solid var(--teal);padding:12px 15px;min-height:93px}
   .kpi:nth-child(2){border-top-color:var(--amber)} .kpi:nth-child(3){border-top-color:var(--blue)} .kpi:nth-child(4){border-top-color:var(--green)}
@@ -36,6 +41,23 @@
   .panel h2{font-size:14px;margin:0;font-weight:650}
   .hint{font-size:11px;color:var(--muted)}
   .chart{height:290px;width:100%}
+  .wide{grid-column:1/-1}
+  .insights{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:13px}
+  .insight{border:1px solid var(--line);background:#fff;padding:11px 13px;min-height:88px}
+  .insight .tag{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted)}
+  .insight .tag:before{content:"";width:7px;height:7px;background:var(--teal);border-radius:50%;flex:none}
+  .insight strong{display:block;font-size:18px;margin-top:7px;color:var(--ink)}
+  .insight span{display:block;font-size:11px;color:var(--muted);line-height:1.5;margin-top:3px}
+  .detail{display:grid;grid-template-columns:1.35fr 1fr;min-height:290px}
+  .detail-chart{height:290px}
+  .detail-copy{padding:18px 18px 14px;border-left:1px solid var(--line);background:#fbfcfc}
+  .detail-copy h3{font-size:14px;margin:0 0 12px;color:var(--ink)}
+  .detail-copy p{font-size:12px;line-height:1.7;color:var(--muted);margin:0 0 13px}
+  .detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  .detail-item{border-top:2px solid #dce9e7;padding-top:7px}
+  .detail-item b{display:block;font-size:16px;color:var(--ink)}
+  .detail-item small{font-size:10px;color:var(--muted)}
+  .funnel-note{padding:0 14px 12px;color:var(--muted);font-size:11px;line-height:1.55}
   .quality{padding:12px 14px 14px}
   .quality table{width:100%;border-collapse:collapse;font-size:12px}
   .quality td{padding:7px 4px;border-bottom:1px solid #edf1f1}
@@ -45,7 +67,7 @@
   .note{font-size:11px;line-height:1.65;color:var(--muted);padding:12px 14px;border-top:1px solid var(--line)}
   footer{font-size:11px;color:var(--muted);padding:16px 2px 0;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
   .empty{height:250px;display:grid;place-items:center;color:var(--muted);font-size:12px}
-  @media(max-width:950px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}.step{padding:9px 8px;font-size:11px}}
+  @media(max-width:950px){.kpis,.insights{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}.wide{grid-column:auto}.step{padding:9px 8px;font-size:11px}.detail{grid-template-columns:1fr}.detail-copy{border-left:0;border-top:1px solid var(--line)}}
   @media(max-width:580px){header{padding:14px 16px;align-items:flex-start;gap:10px;flex-direction:column}.status{margin-left:0}.subtitle{line-height:1.5}main{padding:12px}.pipeline{grid-template-columns:1fr}.step:not(:last-child):after{display:none}.chart{height:265px}.value{font-size:23px}}
 </style>
 </head>
@@ -59,6 +81,15 @@
   <div class="status"><span id="live-dot" class="dot"></span><span id="status">正在读取分析结果</span></div>
 </header>
 <main>
+  <section class="toolbar" aria-label="展示控制">
+    <span class="toolbar-label">展示视角</span>
+    <button class="view-btn active" data-view="all">全量概览</button>
+    <button class="view-btn" data-view="conversion">转化重点</button>
+    <button class="view-btn" data-view="clusters">客户分群</button>
+    <button class="view-btn" data-view="quality">数据质量</button>
+    <button class="view-btn" id="refresh-btn">刷新数据</button>
+    <span class="toolbar-note" id="view-note">当前展示 Spark 全流程分析结果</span>
+  </section>
   <section class="kpis" id="kpis" aria-label="数据集关键指标"></section>
   <section class="pipeline" aria-label="项目处理流程">
     <div class="step">公开 CSV<small>UCI · bank-full</small></div>
@@ -67,12 +98,14 @@
     <div class="step">ODS Parquet<small>按月份分区并回读</small></div>
     <div class="step">SQL + KMeans<small>响应率统计与客户分群</small></div>
   </section>
+  <section class="insights" id="insights" aria-label="重点发现"></section>
   <section class="grid">
     <article class="panel"><div class="panel-head"><h2>按月份的订购率</h2><span class="hint">同时查看样本量，避免只看比例</span></div><div class="chart" id="month-chart"></div></article>
     <article class="panel"><div class="panel-head"><h2>本轮联系次数与订购率</h2><span class="hint">描述性分组结果</span></div><div class="chart" id="campaign-chart"></div></article>
     <article class="panel"><div class="panel-head"><h2>职业群体响应率</h2><span class="hint">按订购率排序 · 悬停查看记录数</span></div><div class="chart" id="job-chart"></div></article>
     <article class="panel"><div class="panel-head"><h2>联系渠道响应率</h2><span class="hint">类别值 unknown 保留原始含义</span></div><div class="chart" id="contact-chart"></div></article>
-    <article class="panel"><div class="panel-head"><h2>KMeans 客户群概览</h2><span class="hint">规模与群体订购率</span></div><div class="chart" id="cluster-chart"></div></article>
+    <article class="panel wide"><div class="panel-head"><h2>联系链路转化漏斗</h2><span class="hint">从全量样本到已知渠道联系，再到最终订购</span></div><div class="chart" id="funnel-chart"></div><div class="funnel-note">漏斗的每一步都来自当前汇总结果：已知联系渠道 = cellular + telephone，最终订购客户 = y 为 yes。它用于答辩时快速说明“触达规模”和“转化结果”的关系。</div></article>
+    <article class="panel wide"><div class="panel-head"><h2>KMeans 客户群概览与详情</h2><span class="hint">点击柱形查看群体画像</span></div><div class="detail"><div class="detail-chart" id="cluster-chart"></div><div class="detail-copy" id="cluster-detail"><h3>群体画像</h3><p>点击左侧任意群体，查看该群体的规模、年龄、余额、联系次数和订购率。</p></div></div></article>
     <article class="panel"><div class="panel-head"><h2>数据与方法核验</h2><span class="hint">由 Spark 作业结果生成</span></div><div class="quality" id="quality"></div><div class="note">KMeans 使用年龄、账户余额、本轮联系次数和此前联系次数；目标字段 y 未参与训练。聚类后的订购率仅用于描述群体差异。</div></article>
   </section>
   <footer><span>数据来源：UCI Machine Learning Repository · Bank Marketing</span><span>页面读取 Spark 导出的 JSON / CSV 汇总结果</span></footer>
@@ -81,6 +114,8 @@
 <script>
 const palette={ink:'#18313b',teal:'#087f78',blue:'#3478a8',amber:'#bd671d',green:'#398453',rose:'#a84b57',muted:'#647780',line:'#dce5e6'};
 const charts={};
+let summaryData=null;
+let activeView='all';
 const months=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
 const monthNames={jan:'1月',feb:'2月',mar:'3月',apr:'4月',may:'5月',jun:'6月',jul:'7月',aug:'8月',sep:'9月',oct:'10月',nov:'11月',dec:'12月'};
 const fmt=n=>Number(n||0).toLocaleString('zh-CN');
@@ -88,9 +123,39 @@ const pct=n=>(Number(n||0)*100).toFixed(2)+'%';
 function chart(id,option){
   const node=document.getElementById(id);
   if(!window.echarts){node.innerHTML='<div class="empty">图表组件加载失败</div>';return;}
-  charts[id]=echarts.init(node);charts[id].setOption(option);
+  charts[id]=echarts.init(node);
+  charts[id].setOption(Object.assign({animationDuration:500,toolbox:{right:8,top:0,feature:{saveAsImage:{title:'保存图片',pixelRatio:2},restore:{title:'还原'}}}},option));
 }
 function unavailable(id){document.getElementById(id).innerHTML='<div class="empty">暂无 Spark 输出结果</div>';}
+function renderInsights(d){
+  const month=d.month||[],job=d.job||[],contact=d.contact||[],campaign=d.campaign||[];
+  const bestMonth=month.slice().sort((a,b)=>Number(b.conversion_rate)-Number(a.conversion_rate))[0];
+  const bestJob=job.slice().sort((a,b)=>Number(b.conversion_rate)-Number(a.conversion_rate))[0];
+  const bestContact=contact.slice().sort((a,b)=>Number(b.conversion_rate)-Number(a.conversion_rate))[0];
+  const highCampaign=campaign.find(x=>x.campaign_band==='6+');
+  const labels={mar:'3月',dec:'12月',oct:'10月',sep:'9月',apr:'4月'};
+  const cards=[
+    ['最高响应月份',bestMonth?`${labels[bestMonth.month]||bestMonth.month} · ${pct(bestMonth.conversion_rate)}`:'暂无','样本量 '+(bestMonth?fmt(bestMonth.records):'--')],
+    ['最佳职业群体',bestJob?`${bestJob.job} · ${pct(bestJob.conversion_rate)}`:'暂无','订购 '+(bestJob?fmt(bestJob.subscribed):'--')],
+    ['最佳联系渠道',bestContact?`${bestContact.contact} · ${pct(bestContact.conversion_rate)}`:'暂无','已覆盖 '+(bestContact?fmt(bestContact.records):'--')+' 条'],
+    ['联系频次提示',highCampaign?`6+ 次 · ${pct(highCampaign.conversion_rate)}`:'暂无','重复联系越多，响应率越低']
+  ];
+  document.getElementById('insights').innerHTML=cards.map(x=>`<div class="insight"><div class="tag">${x[0]}</div><strong>${x[1]}</strong><span>${x[2]}</span></div>`).join('');
+}
+function renderClusterDetail(r){
+  const target=document.getElementById('cluster-detail');
+  if(!r){target.innerHTML='<h3>群体画像</h3><p>点击左侧任意群体，查看该群体的规模、年龄、余额、联系次数和订购率。</p>';return;}
+  const label=`群 ${r.cluster}`;
+  target.innerHTML=`<h3>${label}：客户画像</h3><p>该群体包含 ${fmt(r.records)} 条记录，聚类特征显示它与其他群体在年龄、余额和联系次数上存在明显差异。</p><div class="detail-grid"><div class="detail-item"><b>${fmt(r.records)}</b><small>群体记录数</small></div><div class="detail-item"><b>${pct(r.conversion_rate)}</b><small>群体订购率</small></div><div class="detail-item"><b>${Number(r.avg_age).toFixed(1)}</b><small>平均年龄</small></div><div class="detail-item"><b>${fmt(Math.round(Number(r.avg_balance)))}</b><small>平均账户余额</small></div><div class="detail-item"><b>${Number(r.avg_campaign_contacts).toFixed(2)}</b><small>平均本轮联系</small></div><div class="detail-item"><b>${Number(r.cluster)===2?'高频联系群':'常规联系群'}</b><small>演示标签</small></div></div>`;
+}
+function renderFunnel(d){
+  const rows=d.contact||[];
+  const total=Number(d.profile?.rows||0);
+  const known=rows.filter(x=>x.contact!=='unknown').reduce((s,x)=>s+Number(x.records||0),0);
+  const subscribed=Number(d.profile?.subscription_distribution?.yes||0);
+  if(!total)return unavailable('funnel-chart');
+  chart('funnel-chart',{grid:{left:20,right:20,top:16,bottom:10},tooltip:{trigger:'item',formatter:p=>`${p.name}<br/>记录数：${fmt(p.value)}<br/>占全量：${pct(p.value/total)}`},series:[{type:'funnel',left:'16%',top:24,bottom:24,width:'68%',min:0,max:total,minSize:'25%',maxSize:'100%',sort:'descending',gap:6,label:{show:true,position:'inside',color:'#fff',fontSize:12,formatter:p=>`${p.name}  ${fmt(p.value)}`},itemStyle:{borderColor:'#fff',borderWidth:2},data:[{value:total,name:'全量样本',itemStyle:{color:palette.blue}},{value:known,name:'已知联系渠道',itemStyle:{color:palette.teal}},{value:subscribed,name:'最终订购',itemStyle:{color:palette.amber}}]}]});
+}
 function horizontalRate(id,rows,labelKey,color,limit){
   if(!rows?.length)return unavailable(id);
   const data=rows.slice().sort((a,b)=>Number(b.conversion_rate)-Number(a.conversion_rate)).slice(0,limit||rows.length);
@@ -101,6 +166,7 @@ async function load(){
     const response=await fetch('/api/bank/summary');
     if(!response.ok)throw new Error('api unavailable');
     const d=await response.json();
+    summaryData=d;
     const p=d.profile||{},e=d.etl||{},m=d.model||{};
     const rows=Number(p.rows||e.source_rows||0),yes=Number(p.subscription_distribution?.yes||0),rate=rows?yes/rows:0;
     document.getElementById('kpis').innerHTML=[
@@ -109,6 +175,7 @@ async function load(){
       ['订购客户',fmt(yes),'标签 y = yes'],
       ['总体订购率',pct(rate),'yes / 全部记录']
     ].map((x,i)=>`<div class="kpi"><div class="label">${x[0]}</div><div class="value">${x[1]}</div><div class="foot">${x[2]}</div></div>`).join('');
+    renderInsights(d);
     const ready=Boolean(p.rows&&e.readback_matches&&d.campaign.length&&d.clusters.length);
     document.getElementById('status').textContent=ready?'Spark 分析结果已就绪':'部分结果文件缺失';
     document.getElementById('live-dot').style.background=ready?palette.green:palette.amber;
@@ -116,7 +183,8 @@ async function load(){
     horizontalRate('campaign-chart',d.campaign,'campaign_band',palette.amber);
     horizontalRate('job-chart',d.job,'job',palette.teal,12);
     horizontalRate('contact-chart',d.contact,'contact',palette.blue);
-    if(d.clusters?.length){const cs=d.clusters.slice().sort((a,b)=>Number(a.cluster)-Number(b.cluster));chart('cluster-chart',{grid:{left:48,right:48,top:24,bottom:30},legend:{top:0,data:['群体记录数','订购率'],textStyle:{fontSize:10}},tooltip:{trigger:'axis',formatter:ps=>{const r=cs[ps[0].dataIndex];return `群 ${r.cluster}<br/>记录数：${fmt(r.records)}<br/>平均年龄：${Number(r.avg_age).toFixed(1)}<br/>平均余额：${Number(r.avg_balance).toFixed(0)}<br/>平均本轮联系：${Number(r.avg_campaign_contacts).toFixed(2)}<br/>订购率：${pct(r.conversion_rate)}`;}},xAxis:{type:'category',data:cs.map(x=>'群 '+x.cluster),axisLabel:{color:palette.muted}},yAxis:[{type:'value',name:'记录数',axisLabel:{color:palette.muted},splitLine:{lineStyle:{color:'#edf1f1'}}},{type:'value',name:'订购率',max:.2,axisLabel:{formatter:v=>(v*100).toFixed(0)+'%',color:palette.muted},splitLine:{show:false}}],series:[{name:'群体记录数',type:'bar',barMaxWidth:40,itemStyle:{color:palette.teal,borderRadius:[3,3,0,0]},data:cs.map(x=>Number(x.records))},{name:'订购率',type:'line',yAxisIndex:1,symbolSize:8,itemStyle:{color:palette.rose},lineStyle:{color:palette.rose,width:2},data:cs.map(x=>Number(x.conversion_rate))}]});}else unavailable('cluster-chart');
+    renderFunnel(d);
+    if(d.clusters?.length){const cs=d.clusters.slice().sort((a,b)=>Number(a.cluster)-Number(b.cluster));chart('cluster-chart',{grid:{left:48,right:48,top:24,bottom:30},legend:{top:0,data:['群体记录数','订购率'],textStyle:{fontSize:10}},tooltip:{trigger:'axis',formatter:ps=>{const r=cs[ps[0].dataIndex];return `群 ${r.cluster}<br/>记录数：${fmt(r.records)}<br/>平均年龄：${Number(r.avg_age).toFixed(1)}<br/>平均余额：${Number(r.avg_balance).toFixed(0)}<br/>平均本轮联系：${Number(r.avg_campaign_contacts).toFixed(2)}<br/>订购率：${pct(r.conversion_rate)}`;}},xAxis:{type:'category',data:cs.map(x=>'群 '+x.cluster),axisLabel:{color:palette.muted}},yAxis:[{type:'value',name:'记录数',axisLabel:{color:palette.muted},splitLine:{lineStyle:{color:'#edf1f1'}}},{type:'value',name:'订购率',max:.2,axisLabel:{formatter:v=>(v*100).toFixed(0)+'%',color:palette.muted},splitLine:{show:false}}],series:[{name:'群体记录数',type:'bar',barMaxWidth:40,itemStyle:{color:palette.teal,borderRadius:[3,3,0,0]},data:cs.map(x=>Number(x.records))},{name:'订购率',type:'line',yAxisIndex:1,symbolSize:8,itemStyle:{color:palette.rose},lineStyle:{color:palette.rose,width:2},data:cs.map(x=>Number(x.conversion_rate))}]});charts['cluster-chart'].on('click',params=>{if(params.dataIndex!==undefined)renderClusterDetail(cs[params.dataIndex]);});renderClusterDetail(cs[0]);}else unavailable('cluster-chart');
     const nulls=Object.values(p.nulls||{}).reduce((a,b)=>a+Number(b||0),0),dups=Number(p.duplicate_rows||0);
     document.getElementById('quality').innerHTML=`<table><tr><td>空值合计</td><td class="${nulls===0?'ok':''}">${fmt(nulls)}</td></tr><tr><td>重复记录</td><td class="${dups===0?'ok':''}">${fmt(dups)}</td></tr><tr><td>Parquet 清洗后</td><td>${fmt(e.clean_rows)} 条</td></tr><tr><td>月分区数</td><td>${fmt(e.month_partitions)}</td></tr><tr><td>回读一致</td><td class="${e.readback_matches?'ok':''}">${e.readback_matches?'是':'否'}</td></tr><tr><td>KMeans</td><td>k = ${fmt(m.k)} · ${fmt(m.training_rows)} 条</td></tr><tr><td>训练目标泄漏检查</td><td class="${m.target_used_as_feature===false?'ok':''}">${m.target_used_as_feature===false?'y 未入模':'请核验'}</td></tr></table>`;
     Object.values(charts).forEach(c=>c.resize());
@@ -124,9 +192,22 @@ async function load(){
     document.getElementById('status').textContent='等待本地分析结果文件';
     document.getElementById('live-dot').style.background=palette.amber;
     document.getElementById('kpis').innerHTML='<div class="kpi"><div class="label">分析结果</div><div class="value">--</div><div class="foot">检查输出目录配置</div></div>';
-    ['month-chart','campaign-chart','job-chart','contact-chart','cluster-chart','quality'].forEach(unavailable);
+    ['month-chart','campaign-chart','job-chart','contact-chart','funnel-chart','cluster-chart','quality'].forEach(unavailable);
   }
 }
+function applyView(view){
+  activeView=view;
+  const names={all:'当前展示 Spark 全流程分析结果',conversion:'聚焦月份、联系渠道与转化漏斗',clusters:'聚焦 KMeans 客户群画像与响应差异',quality:'聚焦数据质量、分区回读与方法核验'};
+  document.getElementById('view-note').textContent=names[view]||names.all;
+  document.querySelectorAll('.view-btn[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
+  const ids=['month-chart','campaign-chart','job-chart','contact-chart','funnel-chart','cluster-chart','quality'];
+  const visible=view==='all'?ids:view==='conversion'?['month-chart','campaign-chart','contact-chart','funnel-chart']:view==='clusters'?['cluster-chart']:['quality'];
+  ids.forEach(id=>{const node=document.getElementById(id);if(!node)return;const panel=node.closest('.panel');if(panel)panel.style.display=visible.includes(id)?'block':'none';});
+  document.getElementById('insights').style.display=view==='quality'?'none':'grid';
+  setTimeout(()=>Object.values(charts).forEach(c=>c.resize()),20);
+}
+document.querySelectorAll('.view-btn[data-view]').forEach(btn=>btn.addEventListener('click',()=>applyView(btn.dataset.view)));
+document.getElementById('refresh-btn').addEventListener('click',()=>{document.getElementById('status').textContent='正在刷新分析结果';load();});
 window.addEventListener('resize',()=>Object.values(charts).forEach(c=>c.resize()));
 load();
 </script>
