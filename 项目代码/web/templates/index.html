@@ -25,6 +25,35 @@
   .view-btn{border:1px solid #c8d8d6;background:#f7faf9;color:var(--ink);padding:7px 11px;font-size:12px;cursor:pointer;border-radius:3px}
   .view-btn:hover,.view-btn.active{background:#087f78;color:#fff;border-color:#087f78}
   .toolbar-note{margin-left:auto;font-size:11px;color:var(--muted)}
+  .scenario{background:#eef5f3;border:1px solid #cddfdb;margin-bottom:14px;padding:17px 18px 15px}
+  .scenario-top{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;align-items:start}
+  .scenario-kicker{font-size:11px;color:var(--teal);font-weight:700;letter-spacing:.3px}
+  .scenario h2{font-size:18px;margin:5px 0 6px;color:var(--ink)}
+  .scenario-intro{font-size:12px;line-height:1.7;color:var(--muted);margin:0;max-width:820px}
+  .scenario-ask{background:#fff;border-left:3px solid var(--amber);padding:11px 13px;font-size:12px;line-height:1.65;color:var(--ink)}
+  .scenario-ask b{display:block;font-size:11px;color:var(--amber);margin-bottom:3px}
+  .scenario-grid{display:grid;grid-template-columns:1fr 1.22fr;gap:12px;margin-top:13px}
+  .scenario-actions,.scenario-chart-panel{background:#fff;border:1px solid var(--line)}
+  .scenario-actions{padding:13px 15px}
+  .scenario-actions h3{font-size:14px;margin:0 0 10px}
+  .action-row{display:grid;grid-template-columns:24px 1fr;gap:9px;padding:9px 0;border-top:1px solid #edf1f1}
+  .action-row:first-of-type{border-top:0}
+  .action-num{width:21px;height:21px;border-radius:50%;background:var(--teal);color:#fff;font-size:11px;display:grid;place-items:center;margin-top:1px}
+  .action-row b{font-size:12px;color:var(--ink)}
+  .action-row p{font-size:11px;line-height:1.55;color:var(--muted);margin:3px 0 0}
+  .plan-controls{border-top:1px solid #dce9e7;margin-top:8px;padding-top:10px}
+  .plan-controls h4{font-size:12px;margin:0 0 8px}
+  .plan-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .plan-field label{display:block;font-size:10px;color:var(--muted);margin-bottom:4px}
+  .plan-field select,.plan-field input{width:100%;height:32px;border:1px solid #cbd9d7;background:#fff;color:var(--ink);font:12px inherit;padding:0 8px}
+  .plan-result{font-size:11px;line-height:1.55;color:var(--ink);background:#f3f8f7;border-left:3px solid var(--teal);padding:8px 10px;margin-top:9px}
+  .plan-warning{font-size:10px;line-height:1.5;color:var(--muted);margin:7px 0 0}
+  .plan-export{margin-top:8px}
+  .scenario-chart-panel .panel-head{padding-top:12px}
+  .scenario-chart{height:245px;width:100%}
+  .scenario-footnote{font-size:10px;line-height:1.55;color:var(--muted);padding:0 14px 10px}
+  .scenario-eval{margin-top:12px;background:#fff;border-top:1px solid #cddfdb;padding:10px 12px;font-size:11px;line-height:1.65;color:var(--muted)}
+  .scenario-eval b{color:var(--ink);margin-right:8px}
   .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
   .kpi{background:var(--white);border:1px solid var(--line);border-top:3px solid var(--teal);padding:12px 15px;min-height:93px}
   .kpi:nth-child(2){border-top-color:var(--amber)} .kpi:nth-child(3){border-top-color:var(--blue)} .kpi:nth-child(4){border-top-color:var(--green)}
@@ -67,7 +96,7 @@
   .note{font-size:11px;line-height:1.65;color:var(--muted);padding:12px 14px;border-top:1px solid var(--line)}
   footer{font-size:11px;color:var(--muted);padding:16px 2px 0;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
   .empty{height:250px;display:grid;place-items:center;color:var(--muted);font-size:12px}
-  @media(max-width:950px){.kpis,.insights{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}.wide{grid-column:auto}.step{padding:9px 8px;font-size:11px}.detail{grid-template-columns:1fr}.detail-copy{border-left:0;border-top:1px solid var(--line)}}
+  @media(max-width:950px){.kpis,.insights{grid-template-columns:repeat(2,minmax(0,1fr))}.grid,.scenario-grid,.scenario-top{grid-template-columns:1fr}.wide{grid-column:auto}.step{padding:9px 8px;font-size:11px}.detail{grid-template-columns:1fr}.detail-copy{border-left:0;border-top:1px solid var(--line)}}
   @media(max-width:580px){header{padding:14px 16px;align-items:flex-start;gap:10px;flex-direction:column}.status{margin-left:0}.subtitle{line-height:1.5}main{padding:12px}.pipeline{grid-template-columns:1fr}.step:not(:last-child):after{display:none}.chart{height:265px}.value{font-size:23px}}
 </style>
 </head>
@@ -84,6 +113,7 @@
   <section class="toolbar" aria-label="展示控制">
     <span class="toolbar-label">展示视角</span>
     <button class="view-btn active" data-view="all">全量概览</button>
+    <button class="view-btn" data-view="pilot">业务试点</button>
     <button class="view-btn" data-view="conversion">转化重点</button>
     <button class="view-btn" data-view="clusters">客户分群</button>
     <button class="view-btn" data-view="quality">数据质量</button>
@@ -97,6 +127,43 @@
     <div class="step">Spark 清洗<small>完整性与重复检查</small></div>
     <div class="step">ODS Parquet<small>按月份分区并回读</small></div>
     <div class="step">SQL + KMeans<small>响应率统计与客户分群</small></div>
+  </section>
+  <section class="scenario" id="scenario" aria-label="定期存款外呼试点业务场景">
+    <div class="scenario-top">
+      <div>
+        <div class="scenario-kicker">业务应用场景 · 定期存款外呼试点</div>
+        <h2>下一轮营销活动，先联系谁、用什么渠道、联系几次？</h2>
+        <p class="scenario-intro">假设你是银行营销经理，需要在下一轮定期存款外呼前制定一份可执行的试点名单。页面把历史响应率转成候选客群、渠道和频次规则，再用小规模目标组与保留组进行复盘。</p>
+      </div>
+      <div class="scenario-ask"><b>本页要回答的业务问题</b>如何把 45,211 条历史记录变成一份“可筛选、可触达、可评估”的外呼试点方案？</div>
+    </div>
+    <div class="scenario-grid">
+      <div class="scenario-actions">
+        <h3>建议的首轮试点动作</h3>
+        <div class="action-row"><span class="action-num">1</span><div><b>名单优先级</b><p id="scenario-target">读取响应率较高的职业群体，作为候选名单标签；再排除近期已多次联系的客户。</p></div></div>
+        <div class="action-row"><span class="action-num">2</span><div><b>联系渠道</b><p id="scenario-channel">读取 cellular 与 telephone 的历史表现，优先选择已识别渠道，unknown 先补齐客户信息。</p></div></div>
+        <div class="action-row"><span class="action-num">3</span><div><b>频次控制</b><p id="scenario-frequency">将历史 1-2 次联系组作为首轮频次参考，对高频联系群设置暂缓重复触达规则。</p></div></div>
+        <div class="action-row"><span class="action-num">4</span><div><b>小规模验证</b><p id="scenario-test">建议演示用 1,000 条候选名单，随机保留一部分作为对照，比较真实外呼后的订购率。</p></div></div>
+        <div class="plan-controls">
+          <h4>配置试点计划</h4>
+          <div class="plan-fields">
+            <div class="plan-field"><label for="plan-size">可入组总人数</label><input id="plan-size" type="number" min="100" max="10000" step="100" value="1000"/></div>
+            <div class="plan-field"><label for="plan-control">保留组比例</label><select id="plan-control"><option value="10">10%</option><option value="20" selected>20%</option><option value="30">30%</option></select></div>
+            <div class="plan-field"><label for="plan-benchmark">历史参照维度</label><select id="plan-benchmark"><option value="contact">联系渠道</option><option value="campaign">本轮联系次数</option></select></div>
+            <div class="plan-field"><label for="plan-group">参照组别</label><select id="plan-group"></select></div>
+          </div>
+          <div class="plan-result" id="plan-result">读取历史汇总后显示方案估算。</div>
+          <p class="plan-warning">参照组响应率只用于估算工作量，不是对新客户的预测；渠道、职业和联系频次没有交叉汇总，不能将它们组合后推算联合转化率。</p>
+          <button class="view-btn plan-export" id="export-plan">导出试点方案 CSV</button>
+        </div>
+      </div>
+      <div class="scenario-chart-panel">
+        <div class="panel-head"><h2>联系成本与订购率：分群试点提示</h2><span class="hint">横轴越右代表历史联系更多，气泡越大代表样本越多</span></div>
+        <div class="scenario-chart" id="scenario-chart"></div>
+        <div class="scenario-footnote">图中只展示历史分群的相关关系：高频联系群的订购率较低，不能直接证明“减少联系”一定带来提升。实际运营应通过目标组/保留组对照验证。</div>
+      </div>
+    </div>
+    <div class="scenario-eval"><b>试点复盘口径</b><span id="scenario-eval">主指标：目标组与保留组的订购率差异；辅助指标：每千次触达订购数、unknown 渠道占比、高频重复触达占比。历史统计用于提出假设，执行结果用于验证假设。</span></div>
   </section>
   <section class="insights" id="insights" aria-label="重点发现"></section>
   <section class="grid">
@@ -142,6 +209,72 @@ function renderInsights(d){
   ];
   document.getElementById('insights').innerHTML=cards.map(x=>`<div class="insight"><div class="tag">${x[0]}</div><strong>${x[1]}</strong><span>${x[2]}</span></div>`).join('');
 }
+function renderScenario(d){
+  const jobs=(d.job||[]).slice().sort((a,b)=>Number(b.conversion_rate)-Number(a.conversion_rate));
+  const contacts=(d.contact||[]).slice().sort((a,b)=>Number(b.conversion_rate)-Number(a.conversion_rate));
+  const campaign=(d.campaign||[]).slice();
+  const bestJob=jobs[0],bestContact=contacts[0];
+  const low=campaign.find(x=>x.campaign_band==='1-2'),high=campaign.find(x=>x.campaign_band==='6+');
+  if(bestJob)document.getElementById('scenario-target').textContent=`历史上 ${bestJob.job} 群体订购率最高（${pct(bestJob.conversion_rate)}，${fmt(bestJob.records)} 条），可作为候选标签；上线前仍需按客户状态去重并做资格校验。`;
+  if(bestContact)document.getElementById('scenario-channel').textContent=`历史 ${bestContact.contact} 渠道订购率最高（${pct(bestContact.conversion_rate)}）；unknown 渠道先进入信息补全队列，不直接与已识别渠道混用。`;
+  if(low&&high)document.getElementById('scenario-frequency').textContent=`历史 1-2 次联系组订购率为 ${pct(low.conversion_rate)}，6+ 次组为 ${pct(high.conversion_rate)}；首轮控制在 1-2 次，超过阈值转人工复核。`;
+  const sample=Math.min(1000,Number(d.profile?.rows||1000));
+  document.getElementById('scenario-test').textContent=`演示方案取 ${fmt(sample)} 条候选名单，随机保留约 20% 作为对照，比较真实外呼后的订购率和每千次触达订购数。`;
+  const overall=Number(d.profile?.subscription_distribution?.yes||0)/Number(d.profile?.rows||1);
+  const clusters=(d.clusters||[]).slice().sort((a,b)=>Number(a.cluster)-Number(b.cluster));
+  if(!clusters.length)return unavailable('scenario-chart');
+  chart('scenario-chart',{grid:{left:56,right:30,top:18,bottom:42},tooltip:{trigger:'item',formatter:p=>{const r=p.data.raw;return `${p.data.name}<br/>平均联系：${Number(r.avg_campaign_contacts).toFixed(2)} 次<br/>历史订购率：${pct(r.conversion_rate)}<br/>样本量：${fmt(r.records)}`;}},xAxis:{type:'value',name:'平均本轮联系次数',nameLocation:'middle',nameGap:28,min:0,axisLabel:{color:palette.muted},splitLine:{lineStyle:{color:'#edf1f1'}}},yAxis:{type:'value',name:'历史订购率',max:.2,axisLabel:{formatter:v=>(v*100).toFixed(0)+'%',color:palette.muted},splitLine:{lineStyle:{color:'#edf1f1'}}},series:[{type:'scatter',symbolSize:p=>Math.max(22,Math.min(62,Math.sqrt(p[2])/3)),data:clusters.map((r,i)=>({name:`群 ${r.cluster}`,value:[Number(r.avg_campaign_contacts),Number(r.conversion_rate),Number(r.records)],raw:r,itemStyle:{color:[palette.teal,palette.blue,palette.amber][i%3]}})),markLine:{silent:true,label:{formatter:`总体 ${pct(overall)}`,color:palette.muted},lineStyle:{type:'dashed',color:palette.rose},data:[{yAxis:overall}]}}]});
+  setupPlan(d);
+}
+function planData(){
+  const dimension=document.getElementById('plan-benchmark').value;
+  const rows=summaryData?.[dimension]||[];
+  const key=dimension==='contact'?'contact':'campaign_band';
+  const selected=document.getElementById('plan-group').value;
+  return rows.find(r=>r[key]===selected)||rows[0]||null;
+}
+function updatePlan(){
+  if(!summaryData)return;
+  const input=document.getElementById('plan-size');
+  const total=Math.max(100,Math.min(10000,Number.parseInt(input.value,10)||1000));
+  input.value=total;
+  const holdoutPct=Number(document.getElementById('plan-control').value);
+  const target=Math.round(total*(1-holdoutPct/100));
+  const holdout=total-target;
+  const row=planData();
+  if(!row)return;
+  const rate=Number(row.conversion_rate),expected=Math.round(target*rate);
+  const dimension=document.getElementById('plan-benchmark').value;
+  const groupName=dimension==='contact'?row.contact:row.campaign_band;
+  window.currentPilotPlan={total,target,holdout,holdoutPct,dimension,groupName,rate,expected,records:Number(row.records)};
+  document.getElementById('plan-result').textContent=`${fmt(total)} 人分为目标组 ${fmt(target)} 人、保留组 ${fmt(holdout)} 人。若目标组达到“${groupName}”历史响应率 ${pct(rate)}，参考订购数约 ${fmt(expected)} 人；这是排期基准，不代表实际预测。`;
+}
+function setupPlan(d){
+  summaryData=d;
+  const dimension=document.getElementById('plan-benchmark').value;
+  const rows=d[dimension]||[];
+  const key=dimension==='contact'?'contact':'campaign_band';
+  const select=document.getElementById('plan-group');
+  const prior=select.value;
+  select.innerHTML=rows.map(r=>`<option value="${r[key]}">${r[key]} · ${pct(r.conversion_rate)} · ${fmt(r.records)} 条</option>`).join('');
+  if(rows.some(r=>r[key]===prior))select.value=prior;
+  else if(rows.length){
+    const best=rows.slice().sort((a,b)=>Number(b.conversion_rate)-Number(a.conversion_rate))[0];
+    select.value=best[key];
+  }
+  updatePlan();
+}
+function exportPlan(){
+  const plan=window.currentPilotPlan;
+  if(!plan)return;
+  const dimension=plan.dimension==='contact'?'联系渠道':'本轮联系次数';
+  const cells=['方案名称','业务目标','计划总人数','目标组人数','保留组人数','历史参照维度','参照组别','历史响应率','历史样本量','参考订购数','复盘主指标','方案边界'];
+  const values=['定期存款外呼试点','比较目标组与保留组的订购率',plan.total,plan.target,plan.holdout,dimension,plan.groupName,pct(plan.rate),plan.records,plan.expected,'目标组订购率 - 保留组订购率','描述性历史基准，不是因果结论；各指标为单维度汇总，禁止组合成联合预测'];
+  const csv='\ufeff'+[cells,values].map(row=>row.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(',')).join('\r\n');
+  const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  const link=document.createElement('a');link.href=url;link.download='定期存款外呼试点方案.csv';document.body.appendChild(link);link.click();link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
 function renderClusterDetail(r){
   const target=document.getElementById('cluster-detail');
   if(!r){target.innerHTML='<h3>群体画像</h3><p>点击左侧任意群体，查看该群体的规模、年龄、余额、联系次数和订购率。</p>';return;}
@@ -177,6 +310,7 @@ async function load(){
       ['总体订购率',pct(rate),'yes / 全部记录']
     ].map((x,i)=>`<div class="kpi"><div class="label">${x[0]}</div><div class="value">${x[1]}</div><div class="foot">${x[2]}</div></div>`).join('');
     renderInsights(d);
+    renderScenario(d);
     const ready=Boolean(p.rows&&e.readback_matches&&d.campaign.length&&d.clusters.length);
     document.getElementById('status').textContent=ready?'Spark 分析结果已就绪':'部分结果文件缺失';
     document.getElementById('live-dot').style.background=ready?palette.green:palette.amber;
@@ -193,22 +327,28 @@ async function load(){
     document.getElementById('status').textContent='等待本地分析结果文件';
     document.getElementById('live-dot').style.background=palette.amber;
     document.getElementById('kpis').innerHTML='<div class="kpi"><div class="label">分析结果</div><div class="value">--</div><div class="foot">检查输出目录配置</div></div>';
-    ['month-chart','campaign-chart','job-chart','contact-chart','funnel-chart','cluster-chart','quality'].forEach(unavailable);
+    ['month-chart','campaign-chart','job-chart','contact-chart','funnel-chart','scenario-chart','cluster-chart','quality'].forEach(unavailable);
   }
 }
 function applyView(view){
   activeView=view;
-  const names={all:'当前展示 Spark 全流程分析结果',conversion:'聚焦月份、联系渠道与转化漏斗',clusters:'聚焦 KMeans 客户群画像与响应差异',quality:'聚焦数据质量、分区回读与方法核验'};
+  const names={all:'当前展示 Spark 全流程分析结果',pilot:'聚焦定期存款外呼试点决策',conversion:'聚焦月份、联系渠道与转化漏斗',clusters:'聚焦 KMeans 客户群画像与响应差异',quality:'聚焦数据质量、分区回读与方法核验'};
   document.getElementById('view-note').textContent=names[view]||names.all;
   document.querySelectorAll('.view-btn[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
   const ids=['month-chart','campaign-chart','job-chart','contact-chart','funnel-chart','cluster-chart','quality'];
-  const visible=view==='all'?ids:view==='conversion'?['month-chart','campaign-chart','contact-chart','funnel-chart']:view==='clusters'?['cluster-chart']:['quality'];
+  const visible=view==='all'?ids:view==='pilot'?[]:view==='conversion'?['month-chart','campaign-chart','contact-chart','funnel-chart']:view==='clusters'?['cluster-chart']:['quality'];
   ids.forEach(id=>{const node=document.getElementById(id);if(!node)return;const panel=node.closest('.panel');if(panel)panel.style.display=visible.includes(id)?'block':'none';});
-  document.getElementById('insights').style.display=view==='quality'?'none':'grid';
+  document.getElementById('insights').style.display=view==='quality'||view==='pilot'?'none':'grid';
+  document.getElementById('scenario').style.display=view==='quality'?'none':'block';
   setTimeout(()=>Object.values(charts).forEach(c=>c.resize()),20);
 }
 document.querySelectorAll('.view-btn[data-view]').forEach(btn=>btn.addEventListener('click',()=>applyView(btn.dataset.view)));
 document.getElementById('refresh-btn').addEventListener('click',()=>{document.getElementById('status').textContent='正在刷新分析结果';load();});
+document.getElementById('plan-size').addEventListener('input',updatePlan);
+document.getElementById('plan-control').addEventListener('change',updatePlan);
+document.getElementById('plan-benchmark').addEventListener('change',()=>setupPlan(summaryData||{}));
+document.getElementById('plan-group').addEventListener('change',updatePlan);
+document.getElementById('export-plan').addEventListener('click',exportPlan);
 window.addEventListener('resize',()=>Object.values(charts).forEach(c=>c.resize()));
 load();
 </script>
